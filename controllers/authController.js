@@ -1,7 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs');
-const issueJWT = require('../utils/issueJWT');
+const { issueJWT } = require('../utils/issueJWT');
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
 
 const signUp = asyncHandler(async (req, res, next) => {
   bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
@@ -44,7 +45,24 @@ const signIn = asyncHandler(async (req, res) => {
   res.status(200).json({ status: 'success', data: { user, token: jwt } });
 });
 
+const verify = asyncHandler(async (req, res) => {
+  const token = req.headers['x-access-token'].split(' ')[1];
+
+  try {
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    if (verified) {
+      return res.status(200).json({ status: 'success', data: null });
+    }
+    // Access Denied
+    return res.status(401).json({ status: 'fail', data: null });
+  } catch (error) {
+    // Access Denied
+    return res.status(401).json({ status: 'error' });
+  }
+});
+
 module.exports = {
   signUp,
   signIn,
+  verify,
 };

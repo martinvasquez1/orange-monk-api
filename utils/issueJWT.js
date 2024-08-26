@@ -17,4 +17,4 @@ const issueJWT = (user) => {
   return 'Bearer ' + signedToken;
 };
 
-module.exports = issueJWT;
+module.exports = { issueJWT };
