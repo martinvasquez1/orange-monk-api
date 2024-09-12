@@ -12,6 +12,5 @@ router.put('/:id', controller.updateGroup);
 router.delete('/:id', controller.deleteGroup);
 
 router.get('/:id/posts', controller.getGroupPosts);
-router.post('/:id/posts', controller.createGroupPost);
 
 module.exports = router;
