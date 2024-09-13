@@ -23,7 +23,10 @@ app.use(cors(corsOptions));
 
 // DB connection
 mongoose.set('strictQuery', false);
-const mongoDB = process.env.MONGODB_URI;
+const mongoDB =
+  process.env.NODE_ENV === 'test'
+    ? process.env.TEST_MONGODB_URI
+    : process.env.MONGODB_URI;
 
 async function main() {
   await mongoose.connect(mongoDB);
