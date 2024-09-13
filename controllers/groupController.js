@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const { handleNotFoundError } = require('../middlewares/errorHandlers');
 
 const Group = require('../models/group');
+const Post = require('../models/post');
 
 const getGroups = asyncHandler(async (req, res) => {
   const groups = await Group.find().sort({ username: 1 }).exec();

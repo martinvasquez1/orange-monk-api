@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/postController');
-const commentController = require('../controllers/postController');
+const commentController = require('../controllers/commentController');
 const { authUser } = require('../middlewares/auth');
 
 router.use(authUser);
