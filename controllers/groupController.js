@@ -26,10 +26,21 @@ const createGroup = asyncHandler(async (req, res) => {
     name: req.body.name,
     description: req.body.description,
     private: req.body.private,
+    // TODO: Fix. This is true in most cases but an admin should be able to
+    // create a group for another user. In this case req.user.id is the admin
+    // user and not the real owner id.
     owner: req.user.id,
   });
 
   const savedGroup = await newGroup.save();
+
+  // Add owner to the group
+  const user = await User.findByIdAndUpdate(
+    req.user.id,
+    { $addToSet: { groups: savedGroup.id } },
+    { new: true },
+  );
+
   res.status(200).json({ status: 'success', data: { savedGroup } });
 });
 
@@ -59,6 +70,8 @@ const deleteGroup = asyncHandler(async (req, res) => {
     handleNotFoundError(req, res, 'Group');
     return;
   }
+
+  // TODO: Delete all users from this group.
 
   res.status(200).json({ status: 'success', data: null });
 });
