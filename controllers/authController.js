@@ -5,6 +5,20 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
 const signUp = asyncHandler(async (req, res, next) => {
+  const existingUser = await User.findOne({ username: req.body.username });
+  if (existingUser) {
+    return res
+      .status(400)
+      .json({ status: 'fail', data: { username: 'Username already exists.' } });
+  }
+
+  const existingEmail = await User.findOne({ email: req.body.email });
+  if (existingEmail) {
+    return res
+      .status(400)
+      .json({ status: 'fail', data: { username: 'Email already exists.' } });
+  }
+
   bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
     if (err) {
       return next(err);

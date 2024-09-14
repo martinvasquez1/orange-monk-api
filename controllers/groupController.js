@@ -3,6 +3,7 @@ const { handleNotFoundError } = require('../middlewares/errorHandlers');
 
 const Group = require('../models/group');
 const Post = require('../models/post');
+const User = require('../models/user');
 
 const getGroups = asyncHandler(async (req, res) => {
   const groups = await Group.find().sort({ username: 1 }).exec();
@@ -24,6 +25,7 @@ const createGroup = asyncHandler(async (req, res) => {
   const newGroup = new Group({
     name: req.body.name,
     description: req.body.description,
+    private: req.body.private,
     owner: req.user.id,
   });
 
@@ -74,6 +76,30 @@ const getGroupPosts = asyncHandler(async (req, res) => {
   res.status(200).json({ status: 'success', data: posts });
 });
 
+const join = asyncHandler(async (req, res) => {
+  const group = await Group.findById(req.params.id);
+
+  if (!group) {
+    handleNotFoundError(req, res, 'Group');
+    return;
+  }
+
+  if (group.private) {
+    // Add user to join requests list
+    group.joinRequests.push(req.params.id);
+    await group.save();
+    res.status(200).json({ status: 'success', data: group });
+  } else {
+    // Add group to user's groups
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { $addToSet: { groups: req.params.id } },
+      { new: true },
+    );
+    res.status(200).json({ status: 'success', data: user });
+  }
+});
+
 module.exports = {
   getGroups,
   getGroup,
@@ -81,4 +107,5 @@ module.exports = {
   updateGroup,
   deleteGroup,
   getGroupPosts,
+  join,
 };
