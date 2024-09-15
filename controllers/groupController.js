@@ -6,7 +6,13 @@ const Post = require('../models/post');
 const User = require('../models/user');
 
 const getGroups = asyncHandler(async (req, res) => {
-  const groups = await Group.find().sort({ username: 1 }).exec();
+  const filter = {};
+
+  if (req.query.name) {
+    filter.name = { $regex: req.query.name, $options: 'i' }; // Case-insensitive search
+  }
+
+  const groups = await Group.find(filter).sort({ username: 1 }).exec();
   res.status(200).json({ status: 'success', data: { groups } });
 });
 
