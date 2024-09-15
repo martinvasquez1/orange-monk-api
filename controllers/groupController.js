@@ -3,6 +3,7 @@ const { handleNotFoundError } = require('../middlewares/errorHandlers');
 
 const Group = require('../models/group');
 const Post = require('../models/post');
+const Comment = require('../models/comment');
 const User = require('../models/user');
 
 const getGroups = asyncHandler(async (req, res) => {
@@ -32,10 +33,7 @@ const createGroup = asyncHandler(async (req, res) => {
     name: req.body.name,
     description: req.body.description,
     private: req.body.private,
-    // TODO: Fix. This is true in most cases but an admin should be able to
-    // create a group for another user. In this case req.user.id is the admin
-    // user and not the real owner id.
-    owner: req.user.id,
+    owner: req.body.owner,
   });
 
   const savedGroup = await newGroup.save();
@@ -70,14 +68,22 @@ const updateGroup = asyncHandler(async (req, res) => {
 });
 
 const deleteGroup = asyncHandler(async (req, res) => {
-  const group = await Group.findByIdAndDelete(req.params.id).exec();
+  const groupId = req.params.id;
+  const group = await Group.findByIdAndDelete(groupId).exec();
 
   if (!group) {
     handleNotFoundError(req, res, 'Group');
     return;
   }
 
-  // TODO: Delete all users from this group.
+  // Remove the group from users' groups array
+  await User.updateMany({ groups: groupId }, { $pull: { groups: groupId } });
+  // Delete all comments
+  const posts = await Post.find({ group: groupId }).exec();
+  const postIds = posts.map((post) => post._id);
+  await Comment.deleteMany({ author: { $in: postIds } }).exec();
+  // Delete all posts
+  await Post.deleteMany({ group: groupId }).exec();
 
   res.status(200).json({ status: 'success', data: null });
 });
@@ -104,6 +110,13 @@ const join = asyncHandler(async (req, res) => {
   }
 
   if (group.private) {
+    if (group.joinRequests.includes(userId)) {
+      return res.status(400).json({
+        status: 'fail',
+        data: { message: 'You have already requested to join this group.' },
+      });
+    }
+
     // Add user to join requests list
     group.joinRequests.push(req.params.id);
     await group.save();
