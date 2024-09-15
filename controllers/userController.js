@@ -58,9 +58,22 @@ const deleteUser = asyncHandler(async (req, res) => {
   res.status(200).json({ status: 'success', data: null });
 });
 
+const getUserGroups = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id).populate('groups').exec();
+
+  if (!user) {
+    handleNotFoundError(req, res, 'User');
+    return;
+  }
+
+  const groups = user.groups;
+  res.status(200).json({ status: 'success', data: { groups } });
+});
+
 module.exports = {
   getUsers,
   getUser,
   updateUser,
   deleteUser,
+  getUserGroups,
 };

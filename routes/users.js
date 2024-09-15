@@ -11,4 +11,6 @@ router.get('/:id', controller.getUser);
 router.put('/:id', validateUpdate, controller.updateUser);
 router.delete('/:id', controller.deleteUser);
 
+router.get('/:id/groups', controller.getUserGroups);
+
 module.exports = router;
