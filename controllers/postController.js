@@ -1,13 +1,17 @@
 const asyncHandler = require('express-async-handler');
 const { handleNotFoundError } = require('../middlewares/errorHandlers');
+const { paginated } = require('../middlewares/paginated');
 
 const Post = require('../models/post');
 const Group = require('../models/group');
 
-const getPosts = asyncHandler(async (req, res) => {
-  const posts = await Post.find().sort({ username: 1 }).exec();
-  res.status(200).json({ status: 'success', data: { posts } });
-});
+const getPosts = [
+  paginated(Post),
+  asyncHandler(async (req, res) => {
+    const results = res.paginated;
+    res.status(200).json({ status: 'success', data: { results } });
+  }),
+];
 
 const getPost = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id).populate('author');
@@ -31,7 +35,7 @@ const createPost = asyncHandler(async (req, res) => {
   const newPost = new Post({
     title: req.body.title,
     content: req.body.content,
-    author: req.user.id,
+    author: req.body.author,
     group: req.body.groupId,
   });
 
