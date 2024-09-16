@@ -96,9 +96,9 @@ const getGroupPosts = asyncHandler(async (req, res) => {
     return;
   }
 
-  const posts = await Post.find({ group: req.params.id });
+  const posts = await Post.find({ group: req.params.id }).populate("author");
 
-  res.status(200).json({ status: 'success', data: posts });
+  res.status(200).json({ status: 'success', data: {posts} });
 });
 
 const join = asyncHandler(async (req, res) => {

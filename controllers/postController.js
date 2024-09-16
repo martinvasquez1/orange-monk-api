@@ -10,7 +10,7 @@ const getPosts = asyncHandler(async (req, res) => {
 });
 
 const getPost = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.id).exec();
+  const post = await Post.findById(req.params.id).populate('author');
 
   if (!post) {
     handleNotFoundError(req, res, 'Post');
