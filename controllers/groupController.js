@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const { handleNotFoundError } = require('../middlewares/errorHandlers');
+const { paginate } = require('../middlewares/paginate');
 
 const Group = require('../models/group');
 const Post = require('../models/post');
@@ -90,15 +91,20 @@ const deleteGroup = asyncHandler(async (req, res) => {
 
 const getGroupPosts = asyncHandler(async (req, res) => {
   const group = await Group.findById(req.params.id);
-
   if (!group) {
     handleNotFoundError(req, res, 'Group');
     return;
   }
 
-  const posts = await Post.find({ group: req.params.id }).populate("author");
+  const data = await paginate(
+    Post,
+    req.query.page,
+    req.query.limit,
+    { group: req.params.id },
+    ['author'],
+  );
 
-  res.status(200).json({ status: 'success', data: {posts} });
+  res.status(200).json({ status: 'success', data });
 });
 
 const join = asyncHandler(async (req, res) => {

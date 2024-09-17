@@ -1,17 +1,14 @@
 const asyncHandler = require('express-async-handler');
 const { handleNotFoundError } = require('../middlewares/errorHandlers');
-const { paginated } = require('../middlewares/paginated');
+const { paginate } = require('../middlewares/paginate');
 
 const Post = require('../models/post');
 const Group = require('../models/group');
 
-const getPosts = [
-  paginated(Post),
-  asyncHandler(async (req, res) => {
-    const results = res.paginated;
-    res.status(200).json({ status: 'success', data: { results } });
-  }),
-];
+const getPosts = asyncHandler(async (req, res) => {
+  const data = await paginate(Post, req.query.page, req.query.limit);
+  res.status(200).json({ status: 'success', data });
+});
 
 const getPost = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id).populate('author');
