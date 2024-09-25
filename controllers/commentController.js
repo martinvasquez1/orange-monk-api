@@ -75,12 +75,12 @@ const updateComment = [
   checkAuthor,
   checkPost,
   asyncHandler(async (req, res, next) => {
-    const id = req.params.id;
+    const id = req.params.commentId;
     const payload = new Comment({
       content: req.body.content,
       author: req.body.author,
       likes: req.body.likes,
-      _id: req.params.commentId,
+      _id: id,
     });
 
     const comment = await Comment.findByIdAndUpdate(id, payload, { new: true });

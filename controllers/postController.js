@@ -3,6 +3,7 @@ const { handleNotFoundError } = require('../middlewares/errorHandlers');
 const { paginate } = require('../middlewares/paginate');
 
 const Post = require('../models/post');
+const Comment = require('../models/comment');
 const Group = require('../models/group');
 
 const getPosts = asyncHandler(async (req, res) => {
@@ -59,7 +60,7 @@ const updatePost = asyncHandler(async (req, res) => {
 
   const updatedPost = await Post.findByIdAndUpdate(id, payload, { new: true });
 
-  if (!post) {
+  if (!updatedPost) {
     handleNotFoundError(req, res, 'Post');
     return;
   }
@@ -75,7 +76,7 @@ const deletePost = asyncHandler(async (req, res) => {
     return;
   }
 
-  const post = await post.findByIdAndDelete(req.params.id).exec();
+  const post = await Post.findByIdAndDelete(req.params.id).exec();
 
   if (!post) {
     handleNotFoundError(req, res, 'Post');
