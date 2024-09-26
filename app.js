@@ -7,16 +7,16 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const mongoose = require('mongoose');
 const cors = require('cors');
-const indexRouter = require('./routes/index');
 
-const { Pool } = require('pg');
+const connectMongoDB = require('./config/mongo');
+const connectPostgres = require('./config/postgres');
+
+const indexRouter = require('./routes/index');
 const sqlIndexRouter = require('./sqlRoutes/index');
 
 const app = express();
 
-// CORS
 const corsOptions = {
   origin: process.env.ORIGIN || 'http://localhost:5173',
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
@@ -24,28 +24,8 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// NoSql: DB connection
-mongoose.set('strictQuery', false);
-const mongoDB =
-  process.env.NODE_ENV === 'test'
-    ? process.env.TEST_MONGODB_URI
-    : process.env.MONGODB_URI;
-
-async function main() {
-  await mongoose.connect(mongoDB);
-  console.log('Connected to MongoDB');
-}
-
-// Sql: DB connection
-const pool = new Pool({
-  connectionString: process.env.SQL_DATABASE_URL,
-});
-pool
-  .connect()
-  .then(() => console.log('Connected to PostgreSQL'))
-  .catch((err) => console.error('Connection error', err.stack));
-
-main().catch((err) => console.log(err));
+connectMongoDB();
+connectPostgres();
 
 app.use(logger('dev'));
 app.use(express.json());
