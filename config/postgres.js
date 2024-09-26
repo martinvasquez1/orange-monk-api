@@ -20,4 +20,4 @@ const connectPostgres = async () => {
   }
 };
 
-module.exports = connectPostgres;
+module.exports = { sequelize, connectPostgres };

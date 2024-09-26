@@ -10,7 +10,7 @@ const logger = require('morgan');
 const cors = require('cors');
 
 const connectMongoDB = require('./config/mongo');
-const connectPostgres = require('./config/postgres');
+const { connectPostgres } = require('./config/postgres');
 
 const indexRouter = require('./routes/index');
 const sqlIndexRouter = require('./sqlRoutes/index');
