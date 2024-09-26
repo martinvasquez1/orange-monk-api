@@ -15,7 +15,7 @@ const signUp = asyncHandler(async (req, res, next) => {
   const newUser = await User.create({
     username,
     email,
-    password,
+    password: hashedPassword,
   });
 
   const jwt = issueJWT(newUser);
@@ -23,29 +23,20 @@ const signUp = asyncHandler(async (req, res, next) => {
 });
 
 const signIn = asyncHandler(async (req, res) => {
-  /*
-  const user = await User.findOne({ email: req.body.email });
+  const { email, password } = req.body;
 
+  const user = await User.findOne({ where: { email } });
   if (!user) {
-    return res.status(401).json({
-      status: 'fail',
-      data: { message: 'Invalid email or password.' },
-    });
+    return res.status(401).json({ message: 'Invalid email or password' });
   }
 
-  const match = await bcrypt.compare(req.body.password, user.password);
-
-  if (!match) {
-    return res.status(401).json({
-      status: 'fail',
-      data: { message: 'Invalid email or password' },
-    });
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return res.status(401).json({ message: 'Invalid email or password' });
   }
 
   const jwt = issueJWT(user);
   res.status(200).json({ status: 'success', data: { user, token: jwt } });
-  */
-  res.status(200).json({ status: 'success', data: 'Sign in!' });
 });
 
 module.exports = {
