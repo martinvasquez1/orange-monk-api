@@ -1,76 +1,55 @@
 const asyncHandler = require('express-async-handler');
 const { handleNotFoundError } = require('../middlewares/errorHandlers');
 const bcrypt = require('bcryptjs');
+const User = require('./../sqlModels/user');
 
 const getUsers = asyncHandler(async (req, res) => {
-  // const users = await User.find().sort({ username: 1 }).exec();
-  res.status(200).json({ status: 'success', data: 'Return all users' });
+  const users = await User.findAll();
+  res.status(200).json({ status: 'success', data: users });
 });
 
 const getUser = asyncHandler(async (req, res) => {
-  /*
-  const user = await User.findById(req.params.id).exec();
-
+  const user = await User.findByPk(req.params.id);
   if (!user) {
-    handleNotFoundError(req, res, 'User');
-    return;
+    return handleNotFoundError('User');
   }
-  */
-
-  res.status(200).json({ status: 'success', data: 'Return user' });
+  res.status(200).json({ status: 'success', data: { user } });
 });
 
 const updateUser = asyncHandler(async (req, res, next) => {
-  bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
-    if (err) {
-      return next(err);
-    }
+  const user = await User.findByPk(req.params.id);
+  if (!user) {
+    return handleNotFoundError('User');
+  }
 
-    const id = req.params.id;
-    /*
-    const payload = new User({
-      username: req.body.username,
-      email: req.body.email,
-      password: hashedPassword,
-      _id: req.params.id,
-    });
+  const hashedPassword = req.body.password
+    ? await bcrypt.hash(req.body.password, 10)
+    : null;
 
-    const user = await User.findByIdAndUpdate(id, payload, { new: true });
+  const payload = {
+    username: req.body.username,
+    email: req.body.email,
+  };
 
-    if (!user) {
-      handleNotFoundError(req, res, 'User');
-      return;
-    }
-    */
+  if (hashedPassword) {
+    payload.password = hashedPassword;
+  }
 
-    res.status(200).json({ status: 'success', data: 'Update user' });
-  });
+  const updatedUser = await user.update(payload);
+
+  res.status(200).json({ status: 'success', data: { updatedUser } });
 });
 
 const deleteUser = asyncHandler(async (req, res) => {
-  /*
-  const user = await User.findByIdAndDelete(req.params.id).exec();
-
+  const user = await User.findByPk(req.params.id);
   if (!user) {
-    handleNotFoundError(req, res, 'User');
-    return;
+    return handleNotFoundError('User');
   }
-  */
-
-  res.status(200).json({ status: 'success', data: 'Delete user' });
+  await user.destroy();
+  res.status(200).json({ status: 'success', data: null });
 });
 
 const getUserGroups = asyncHandler(async (req, res) => {
-  /*
-  const user = await User.findById(req.params.id).populate('groups').exec();
-
-  if (!user) {
-    handleNotFoundError(req, res, 'User');
-    return;
-  }
-
-  const groups = user.groups;
-  */
   res.status(200).json({ status: 'success', data: 'Return user groups' });
 });
 
