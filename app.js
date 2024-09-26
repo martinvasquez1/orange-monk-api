@@ -11,6 +11,9 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const indexRouter = require('./routes/index');
 
+const { Pool } = require('pg');
+const sqlIndexRouter = require('./sqlRoutes/index');
+
 const app = express();
 
 // CORS
@@ -21,7 +24,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// DB connection
+// NoSql: DB connection
 mongoose.set('strictQuery', false);
 const mongoDB =
   process.env.NODE_ENV === 'test'
@@ -30,8 +33,17 @@ const mongoDB =
 
 async function main() {
   await mongoose.connect(mongoDB);
-  console.log('Connected to database');
+  console.log('Connected to MongoDB');
 }
+
+// Sql: DB connection
+const pool = new Pool({
+  connectionString: process.env.SQL_DATABASE_URL,
+});
+pool
+  .connect()
+  .then(() => console.log('Connected to PostgreSQL'))
+  .catch((err) => console.error('Connection error', err.stack));
 
 main().catch((err) => console.log(err));
 
@@ -42,6 +54,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/v1', indexRouter);
+app.use('/api-sql/v1', sqlIndexRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
