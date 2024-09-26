@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const { handleNotFoundError } = require('../middlewares/errorHandlers');
 const bcrypt = require('bcryptjs');
 const User = require('./../sqlModels/user');
+const { sequelize } = require('./../config/postgres');
 
 const getUsers = asyncHandler(async (req, res) => {
   const users = await User.findAll();
@@ -53,10 +54,27 @@ const getUserGroups = asyncHandler(async (req, res) => {
   res.status(200).json({ status: 'success', data: 'Return user groups' });
 });
 
+const addPictureColumn = asyncHandler(async (req, res) => {
+  const queryInterface = sequelize.getQueryInterface();
+  await queryInterface.addColumn('Users', 'profilePicture2', {
+    type: sequelize.Sequelize.STRING,
+    allowNull: true,
+  });
+  res.status(200).json({ status: 'success', data: 'Add new column!' });
+});
+
+const removePictureColumn = asyncHandler(async (req, res) => {
+  const queryInterface = sequelize.getQueryInterface();
+  await queryInterface.removeColumn('Users', 'profilePicture2');
+  res.status(200).json({ status: 'success', data: 'Column removed!' });
+});
+
 module.exports = {
   getUsers,
   getUser,
   updateUser,
   deleteUser,
   getUserGroups,
+  addPictureColumn,
+  removePictureColumn,
 };
