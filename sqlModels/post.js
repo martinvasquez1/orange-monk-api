@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('./../config/postgres');
+const { sequelize } = require('../config/postgres');
 const User = require('./User');
 const Group = require('./Group');
 
