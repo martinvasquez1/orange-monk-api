@@ -3,6 +3,7 @@ const { handleNotFoundError } = require('../middlewares/errorHandlers');
 
 const Group = require('./../sqlModels/group');
 const User = require('../sqlModels/user');
+const Post = require('../sqlModels/post');
 const UserGroup = require('../sqlModels/userGroup');
 
 const getGroups = asyncHandler(async (req, res) => {
@@ -70,8 +71,19 @@ const deleteGroup = asyncHandler(async (req, res) => {
   res.status(200).json({ status: 'success', data: null });
 });
 
-const getGroupPosts = asyncHandler(async (req, res) => {
-  res.status(200).json({ status: 'success', data: 'Hi!' });
+const getGroupWithPosts = asyncHandler(async (req, res) => {
+  const groupWithPosts = await Group.findOne({
+    where: { id: req.params.id },
+    include: {
+      model: Post,
+    },
+  });
+
+  if (!groupWithPosts) {
+    handleNotFoundError('Group');
+  }
+
+  res.status(200).json({ status: 'success', data: groupWithPosts });
 });
 
 const join = asyncHandler(async (req, res) => {
@@ -84,6 +96,6 @@ module.exports = {
   createGroup,
   updateGroup,
   deleteGroup,
-  getGroupPosts,
+  getGroupWithPosts,
   join,
 };

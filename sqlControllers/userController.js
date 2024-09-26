@@ -62,7 +62,7 @@ const getUserWithGroups = asyncHandler(async (req, res) => {
   });
 
   if (!userWithGroups) {
-    return res.status(404).json({ message: 'User not found' });
+    handleNotFoundError('User');
   }
 
   res.status(200).json({ status: 'success', data: userWithGroups });

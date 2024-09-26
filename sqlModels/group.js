@@ -20,7 +20,7 @@ const Group = sequelize.define(
       allowNull: false,
     },
     joinRequests: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
+      type: DataTypes.ARRAY(DataTypes.INTEGER),
       allowNull: true,
     },
     owner: {

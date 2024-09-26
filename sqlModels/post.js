@@ -27,5 +27,6 @@ const Post = sequelize.define(
 
 Post.belongsTo(User, { foreignKey: 'author' });
 Post.belongsTo(Group, { foreignKey: 'group', onDelete: 'CASCADE' });
+Group.hasMany(Post, { foreignKey: 'group' });
 
 module.exports = Post;
