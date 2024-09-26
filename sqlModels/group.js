@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('./../config/postgres');
+const User = require('./user');
 
 const Group = sequelize.define(
   'Group',
@@ -18,10 +19,20 @@ const Group = sequelize.define(
       defaultValue: true,
       allowNull: false,
     },
+    joinRequests: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: true,
+    },
+    owner: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
   {
     timestamps: true,
   },
 );
+
+Group.belongsTo(User, { foreignKey: 'owner' });
 
 module.exports = Group;

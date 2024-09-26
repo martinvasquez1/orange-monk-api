@@ -13,7 +13,7 @@ const handleValidationError = (req, res, next) => {
 };
 
 const handleNotFoundError = (req, res, resourceName) => {
-  res.status(404).json({
+  return res.status(404).json({
     status: 'fail',
     data: { message: `${resourceName} does not exist.` },
   });

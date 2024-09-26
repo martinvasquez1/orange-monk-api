@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('./../config/postgres');
-const User = require('./User');
-const Post = require('./Post');
+const User = require('./user');
+const Post = require('./post');
 
 const Comment = sequelize.define(
   'Comment',
@@ -20,7 +20,7 @@ const Comment = sequelize.define(
   },
 );
 
-Comment.belongsTo(Post, { foreignKey: 'postId' });
+Comment.belongsTo(Post, { foreignKey: 'postId', onDelete: 'CASCADE' });
 Comment.belongsTo(User, { foreignKey: 'authorId' });
 
 Post.hasMany(Comment, { foreignKey: 'postId' });

@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('./../config/postgres');
-const User = require('./User');
-const Group = require('./Group');
+const User = require('./user');
+const Group = require('./group');
 
 const UserGroup = sequelize.define(
   'UserGroup',
@@ -11,17 +11,21 @@ const UserGroup = sequelize.define(
       allowNull: false,
       defaultValue: 'member',
     },
-    joinedAt: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
   },
   {
     timestamps: false,
   },
 );
 
-User.belongsToMany(Group, { through: UserGroup });
-Group.belongsToMany(User, { through: UserGroup });
+User.belongsToMany(Group, {
+  through: UserGroup,
+  foreignKey: 'userId',
+  onDelete: 'CASCADE',
+});
+Group.belongsToMany(User, {
+  through: UserGroup,
+  foreignKey: 'groupId',
+  onDelete: 'CASCADE',
+});
 
 module.exports = UserGroup;

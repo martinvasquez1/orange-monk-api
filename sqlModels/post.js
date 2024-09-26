@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/postgres');
-const User = require('./User');
-const Group = require('./Group');
+const User = require('./user');
+const Group = require('./group');
 
 const Post = sequelize.define(
   'Post',
@@ -26,6 +26,6 @@ const Post = sequelize.define(
 );
 
 Post.belongsTo(User, { foreignKey: 'authorId' });
-Post.belongsTo(Group, { foreignKey: 'groupId' });
+Post.belongsTo(Group, { foreignKey: 'groupId', onDelete: 'CASCADE' });
 
 module.exports = Post;
