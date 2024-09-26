@@ -69,6 +69,15 @@ const removePictureColumn = asyncHandler(async (req, res) => {
   res.status(200).json({ status: 'success', data: 'Column removed!' });
 });
 
+const deleteTable = asyncHandler(async (req, res) => {
+  try {
+    await sequelize.query('DROP TABLE "Users" CASCADE;');
+    res.status(200).json({ status: 'success', data: 'Table deleted...' });
+  } catch (error) {
+    res.status(404).json({ status: 'failed', data: 'No User table.' });
+  }
+});
+
 module.exports = {
   getUsers,
   getUser,
@@ -77,4 +86,5 @@ module.exports = {
   getUserGroups,
   addPictureColumn,
   removePictureColumn,
+  deleteTable,
 };

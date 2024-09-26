@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const controller = require('./../sqlControllers/userController');
 
+router.delete('/table', controller.deleteTable);
+
 router.get('/', controller.getUsers);
 router.get('/:id', controller.getUser);
 router.put('/:id', controller.updateUser);
