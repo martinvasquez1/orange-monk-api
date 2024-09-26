@@ -1,42 +1,25 @@
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs');
 const { issueJWT } = require('../utils/issueJWT');
+const User = require('./../sqlModels/user');
 
 const signUp = asyncHandler(async (req, res, next) => {
-  res.status(200).json({ status: 'success', data: 'Sign up!' });
-  /*
-  const existingUser = await User.findOne({ username: req.body.username });
+  const { username, email, password } = req.body;
+  const existingUser = await User.findOne({ where: { email } });
   if (existingUser) {
-    return res
-      .status(400)
-      .json({ status: 'fail', data: { username: 'Username already exists.' } });
+    return res.status(400).json({ message: 'User already exists' });
   }
 
-  const existingEmail = await User.findOne({ email: req.body.email });
-  if (existingEmail) {
-    return res
-      .status(400)
-      .json({ status: 'fail', data: { username: 'Email already exists.' } });
-  }
+  const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-  bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
-    if (err) {
-      return next(err);
-    }
-
-    const newUser = new User({
-      username: req.body.username,
-      email: req.body.email,
-      password: hashedPassword,
-    });
-
-    const savedUser = await newUser.save();
-    const jwt = issueJWT(savedUser);
-    res.status(200).json({ status: 'success', data: { user: newUser, token: jwt } });
-    res.status(200).json({ status: 'success', data: 'Sign up!' });
+  const newUser = await User.create({
+    username,
+    email,
+    password,
   });
 
-    */
+  const jwt = issueJWT(newUser);
+  return res.status(201).json({ status: 'success', data: { user: newUser, token: jwt } });
 });
 
 const signIn = asyncHandler(async (req, res) => {

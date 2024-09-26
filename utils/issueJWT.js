@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const issueJWT = (user) => {
-  const _id = user._id;
+  const _id = user._id || user.id;
   const expiresIn = '2d';
 
   const payload = {

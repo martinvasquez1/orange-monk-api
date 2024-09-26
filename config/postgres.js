@@ -8,6 +8,7 @@ const sequelize = new Sequelize(process.env.SQL_DATABASE_URL, {
       rejectUnauthorized: false, // This is for self-signed certificates
     },
   },
+  logging: false,
 });
 
 const connectPostgres = async () => {
