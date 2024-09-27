@@ -43,8 +43,3 @@ SQL_DATABASE_URL="your_url"`
 ```bash
 npm run dev
 ```
-
-### API Documentation
-
-- [SQL Documentation.](https://github.com/martinvasquez1/orange-monk-api/wiki/sql-documentation)
-- NoSQL Documentation.
