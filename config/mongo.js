@@ -8,6 +8,11 @@ const mongoDB =
     : process.env.MONGODB_URI;
 
 async function connectMongoDB() {
+  if (!mongoDB) {
+    console.log('MongoDB connection URL is not defined.');
+    return;
+  }
+
   try {
     await mongoose.connect(mongoDB);
     console.log('Connected to MongoDB');
