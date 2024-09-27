@@ -8,6 +8,8 @@ Currently, it features separate endpoints and controllers for SQL and NoSQL data
 
 - Node.js
 - Express
+- MongoDB
+- PostgreSQL
 - Mongoose
 - Sequelize
 
@@ -41,3 +43,8 @@ SQL_DATABASE_URL="your_url"`
 ```bash
 npm run dev
 ```
+
+### API Documentation
+
+- [SQL Documentation.](https://github.com/martinvasquez1/orange-monk-api/wiki/sql-documentation)
+- NoSQL Documentation.
