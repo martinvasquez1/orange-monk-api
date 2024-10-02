@@ -3,6 +3,7 @@ const { handleNotFoundError } = require('../middlewares/errorHandlers');
 const { paginate } = require('../middlewares/paginate');
 
 const Group = require('../models/group');
+const UserGroup = require('../models/userGroup');
 const Post = require('../models/post');
 const Comment = require('../models/comment');
 const User = require('../models/user');
@@ -39,12 +40,13 @@ const createGroup = asyncHandler(async (req, res) => {
 
   const savedGroup = await newGroup.save();
 
-  // Add owner to the group
-  const user = await User.findByIdAndUpdate(
-    req.user.id,
-    { $addToSet: { groups: savedGroup.id } },
-    { new: true },
-  );
+  const newUserGroup = new UserGroup({
+    user: req.body.owner,
+    group: savedGroup._id,
+    role: 'member',
+  });
+
+  const savedUserGroup = await newUserGroup.save();
 
   res.status(200).json({ status: 'success', data: { savedGroup } });
 });
@@ -109,14 +111,26 @@ const getGroupPosts = asyncHandler(async (req, res) => {
 
 const join = asyncHandler(async (req, res) => {
   const group = await Group.findById(req.params.id);
-
   if (!group) {
-    handleNotFoundError(req, res, 'Group');
-    return;
+    return handleNotFoundError(req, res, 'Group');
+  }
+  const user = await User.findById(req.body.userId);
+  if (!user) {
+    return handleNotFoundError(req, res, 'User');
+  }
+  const userGroup = await UserGroup.findOne({
+    user: req.body.userId,
+    group: req.params.id,
+  });
+  if (userGroup) {
+    return res.status(400).json({
+      status: 'fail',
+      data: { message: 'You are already a member of this group.' },
+    });
   }
 
   if (group.private) {
-    if (group.joinRequests.includes(userId)) {
+    if (group.joinRequests.includes(req.body.userId)) {
       return res.status(400).json({
         status: 'fail',
         data: { message: 'You have already requested to join this group.' },
@@ -124,17 +138,17 @@ const join = asyncHandler(async (req, res) => {
     }
 
     // Add user to join requests list
-    group.joinRequests.push(req.params.id);
+    group.joinRequests.push(req.params.userId);
     await group.save();
     res.status(200).json({ status: 'success', data: group });
   } else {
-    // Add group to user's groups
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
-      { $addToSet: { groups: req.params.id } },
-      { new: true },
-    );
-    res.status(200).json({ status: 'success', data: user });
+    const newUserGroup = new UserGroup({
+      user: req.body.userId,
+      group: req.params.id,
+      role: 'member',
+    });
+    const savedUserGroup = await newUserGroup.save();
+    res.status(200).json({ status: 'success', data: savedUserGroup });
   }
 });
 

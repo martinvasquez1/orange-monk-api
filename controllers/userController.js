@@ -2,7 +2,10 @@ const asyncHandler = require('express-async-handler');
 const { handleNotFoundError } = require('../middlewares/errorHandlers');
 const bcrypt = require('bcryptjs');
 
+const mongoose = require('mongoose');
+
 const User = require('../models/user');
+const UserGroup = require('../models/userGroup');
 const { scopedUsers } = require('../permissions/userPermission');
 
 const getUsers = asyncHandler(async (req, res) => {
@@ -59,14 +62,8 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 
 const getUserGroups = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id).populate('groups').exec();
-
-  if (!user) {
-    handleNotFoundError(req, res, 'User');
-    return;
-  }
-
-  const groups = user.groups;
+  const userGroups = await UserGroup.find({ user: req.params.id }).populate('group').exec();
+	const groups = userGroups.map(userGroup => userGroup.group);
   res.status(200).json({ status: 'success', data: { groups } });
 });
 

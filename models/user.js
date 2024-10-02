@@ -9,7 +9,6 @@ const UserSchema = new Schema(
     password: { type: String, minLength: 3, maxLength: 512, required: true },
     profilePicture: { type: String },
     bio: { type: String, default: 'I like ice cream.' },
-    groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
     role: { type: String, enum: ['basic', 'admin'], default: 'basic', required: true },
   },
   { timestamps: true },
