@@ -8,9 +8,11 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
+const { createServer } = require('node:http');
 
 const connectMongoDB = require('./config/mongo');
 const { connectPostgres } = require('./config/postgres');
+const setupSocketIo = require('./sockets/socketIo');
 
 const indexRouter = require('./routes/index');
 const sqlIndexRouter = require('./sqlRoutes/index');
@@ -35,6 +37,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/v1', indexRouter);
 app.use('/api-sql/v1', sqlIndexRouter);
+
+const server = createServer(app);
+const port = process.env.SOCKET_PORT || 3001;
+setupSocketIo(server, corsOptions);
+server.listen(port, () => console.log(`WS Listening on port ${port}`));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
