@@ -109,6 +109,12 @@ const getGroupPosts = asyncHandler(async (req, res) => {
   res.status(200).json({ status: 'success', data });
 });
 
+const getGroupUsers = asyncHandler(async (req, res) => {
+  const userGroup = await UserGroup.find({ group: req.params.id });
+  const users = userGroup.map((data) => data.user);
+  res.status(200).json({ status: 'success', data: users });
+});
+
 const join = asyncHandler(async (req, res) => {
   const group = await Group.findById(req.params.id);
   if (!group) {
@@ -159,5 +165,6 @@ module.exports = {
   updateGroup,
   deleteGroup,
   getGroupPosts,
+  getGroupUsers,
   join,
 };
