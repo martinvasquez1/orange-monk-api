@@ -15,7 +15,7 @@ const getGroups = asyncHandler(async (req, res) => {
     filter.name = { $regex: req.query.name, $options: 'i' }; // Case-insensitive search
   }
 
-  const groups = await Group.find(filter).sort({ username: 1 }).exec();
+  const groups = await paginate(Group, req.query.page, req.query.limit, filter);
   res.status(200).json({ status: 'success', data: { groups } });
 });
 
