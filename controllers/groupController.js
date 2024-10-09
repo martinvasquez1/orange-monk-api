@@ -110,9 +110,15 @@ const getGroupPosts = asyncHandler(async (req, res) => {
 });
 
 const getGroupUsers = asyncHandler(async (req, res) => {
-  const userGroup = await UserGroup.find({ group: req.params.id });
-  const users = userGroup.map((data) => data.user);
-  res.status(200).json({ status: 'success', data: users });
+	const data = await paginate(
+    UserGroup,
+    req.query.page,
+    req.query.limit,
+    { group: req.params.id },
+		['user']
+  );
+	data.results = data.results.map((result) => result.user);
+  res.status(200).json({ status: 'success', data });
 });
 
 const join = asyncHandler(async (req, res) => {

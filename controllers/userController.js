@@ -70,7 +70,7 @@ const getUserGroups = asyncHandler(async (req, res) => {
     filter,
     populate,
   );
-  userGroups.result = userGroups.results.map((result) => result.group);
+  userGroups.results = userGroups.results.map((result) => result.group);
   res.status(200).json({ status: 'success', data: { groups: userGroups } });
 });
 

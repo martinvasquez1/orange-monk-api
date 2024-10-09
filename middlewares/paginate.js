@@ -30,6 +30,8 @@ async function paginate(model, page = 1, limit = 10, filter = {}, populate = [])
     .limit(limit)
     .skip(startIndex)
     .exec();
+	results.totalPages = Math.ceil(amountDocuments / limit);
+
   return results;
 }
 
