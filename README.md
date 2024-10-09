@@ -2,8 +2,6 @@
 
 This REST API serves as the backend for a social media web application. It features the use of SQL and NoSQL databases.
 
-Currently, it features separate endpoints and controllers for SQL and NoSQL databases, but future updates will consolidate them to minimize redundancy.
-
 ## Technologies
 
 - Node.js
@@ -35,7 +33,9 @@ npm install
 ```bash
 NODE_ENV="development"
 JWT_SECRET="shhh..."
-SQL_DATABASE_URL="your_url"`
+
+MONGO_URL="your_url"
+POSTGRES_URL="your_url"`
 ```
 
 4. Run the application:

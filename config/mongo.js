@@ -3,9 +3,7 @@ const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
 
 const mongoDB =
-  process.env.NODE_ENV === 'test'
-    ? process.env.TEST_MONGODB_URI
-    : process.env.MONGODB_URI;
+  process.env.NODE_ENV === 'test' ? process.env.TEST_MONGO_URL : process.env.MONGO_URL;
 
 async function connectMongoDB() {
   if (!mongoDB) {
