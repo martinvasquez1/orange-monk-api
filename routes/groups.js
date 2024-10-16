@@ -15,6 +15,7 @@ router.delete('/:id', controller.deleteGroup);
 router.get('/:id/posts', controller.getGroupPosts);
 router.get('/:id/users', controller.getGroupUsers);
 router.post('/:id/join', controller.join);
+router.delete('/:id/leave', controller.leave);
 
 router.get('/:id/rooms', roomController.getRooms);
 router.get('/:id/rooms/:roomId', roomController.getRoom);

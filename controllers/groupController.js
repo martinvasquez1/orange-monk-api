@@ -110,17 +110,18 @@ const getGroupPosts = asyncHandler(async (req, res) => {
 });
 
 const getGroupUsers = asyncHandler(async (req, res) => {
-	const data = await paginate(
+  const data = await paginate(
     UserGroup,
     req.query.page,
     req.query.limit,
     { group: req.params.id },
-		['user']
+    ['user'],
   );
   res.status(200).json({ status: 'success', data });
 });
 
 const join = asyncHandler(async (req, res) => {
+  // TODO: Avoid repetition creating middleware
   const group = await Group.findById(req.params.id);
   if (!group) {
     return handleNotFoundError(req, res, 'Group');
@@ -163,6 +164,28 @@ const join = asyncHandler(async (req, res) => {
   }
 });
 
+const leave = asyncHandler(async (req, res) => {
+  const group = await Group.findById(req.params.id);
+  if (!group) {
+    return handleNotFoundError(req, res, 'Group');
+  }
+  const user = await User.findById(req.body.userId);
+  if (!user) {
+    return handleNotFoundError(req, res, 'User');
+  }
+  const userGroup = await UserGroup.findOne({
+    user: req.body.userId,
+    group: req.params.id,
+  });
+  if (!userGroup) {
+    return handleNotFoundError(req, res, 'UserGroup');
+  }
+
+  await userGroup.deleteOne({ user: req.body.userId, group: req.params.id });
+
+  res.status(200).json({ status: 'success', data: null });
+});
+
 module.exports = {
   getGroups,
   getGroup,
@@ -172,4 +195,5 @@ module.exports = {
   getGroupPosts,
   getGroupUsers,
   join,
+  leave,
 };

@@ -17,7 +17,7 @@ const connectPostgres = async () => {
     console.log('Connected to Postgres');
     await sequelize.sync();
   } catch (error) {
-    console.error('Unable to connect to the database:', error);
+    console.error('Unable to connect to Postgres database');
   }
 };
 
