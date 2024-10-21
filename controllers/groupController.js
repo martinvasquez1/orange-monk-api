@@ -53,10 +53,16 @@ const createGroup = asyncHandler(async (req, res) => {
 
 const updateGroup = asyncHandler(async (req, res) => {
   const id = req.params.id;
+
   const payload = new Group({
     name: req.body.name,
     description: req.body.description,
     owner: req.user.id,
+    sidebar: req.body.sidebar,
+    previewImage: req.body.previewImage,
+    bannerImage: req.body.bannerImage,
+    theme: req.body.theme,
+    private: req.body.private,
     _id: req.params.id,
   });
 
