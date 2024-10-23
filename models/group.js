@@ -11,7 +11,6 @@ const GroupSchema = new Schema(
     previewImage: { type: String, default: null },
     bannerImage: { type: String, default: null },
     theme: { type: String, default: '' },
-    joinRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }],
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   },
   { timestamps: true },

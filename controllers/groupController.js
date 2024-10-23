@@ -7,6 +7,7 @@ const UserGroup = require('../models/userGroup');
 const Post = require('../models/post');
 const Comment = require('../models/comment');
 const User = require('../models/user');
+const JoinRequest = require('../models/joinRequest');
 
 const getGroups = asyncHandler(async (req, res) => {
   const filter = {};
@@ -43,7 +44,7 @@ const createGroup = asyncHandler(async (req, res) => {
   const newUserGroup = new UserGroup({
     user: req.body.owner,
     group: savedGroup._id,
-    role: 'member',
+    role: 'admin',
   });
 
   const savedUserGroup = await newUserGroup.save();
@@ -126,50 +127,6 @@ const getGroupUsers = asyncHandler(async (req, res) => {
   res.status(200).json({ status: 'success', data });
 });
 
-const join = asyncHandler(async (req, res) => {
-  // TODO: Avoid repetition creating middleware
-  const group = await Group.findById(req.params.id);
-  if (!group) {
-    return handleNotFoundError(req, res, 'Group');
-  }
-  const user = await User.findById(req.body.userId);
-  if (!user) {
-    return handleNotFoundError(req, res, 'User');
-  }
-  const userGroup = await UserGroup.findOne({
-    user: req.body.userId,
-    group: req.params.id,
-  });
-  if (userGroup) {
-    return res.status(400).json({
-      status: 'fail',
-      data: { message: 'You are already a member of this group.' },
-    });
-  }
-
-  if (group.private) {
-    if (group.joinRequests.includes(req.body.userId)) {
-      return res.status(400).json({
-        status: 'fail',
-        data: { message: 'You have already requested to join this group.' },
-      });
-    }
-
-    // Add user to join requests list
-    group.joinRequests.push(req.params.userId);
-    await group.save();
-    res.status(200).json({ status: 'success', data: group });
-  } else {
-    const newUserGroup = new UserGroup({
-      user: req.body.userId,
-      group: req.params.id,
-      role: 'member',
-    });
-    const savedUserGroup = await newUserGroup.save();
-    res.status(200).json({ status: 'success', data: savedUserGroup });
-  }
-});
-
 const leave = asyncHandler(async (req, res) => {
   const group = await Group.findById(req.params.id);
   if (!group) {
@@ -200,6 +157,5 @@ module.exports = {
   deleteGroup,
   getGroupPosts,
   getGroupUsers,
-  join,
   leave,
 };
