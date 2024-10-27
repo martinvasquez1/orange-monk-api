@@ -15,7 +15,10 @@ const getJoinRequests = asyncHandler(async (req, res) => {
     return handleNotFoundError(req, res, 'Group');
   }
 
-	const joinRequests = await JoinRequest.find({ group: req.params.id });
+	const filter = { group: req.params.id, status: 'pending' }
+	const populate = ['user']
+  const joinRequests = await paginate(JoinRequest, req.query.page, req.query.limit, filter, populate);
+
   res.status(200).json({ status: 'success', data: joinRequests });
 })
 
@@ -115,28 +118,6 @@ const denyJoinRequest = asyncHandler(async (req, res) => {
 	await request.save()
 
   res.status(200).json({ status: 'success', data: request });
-});
-
-const leave = asyncHandler(async (req, res) => {
-  const group = await Group.findById(req.params.id);
-  if (!group) {
-    return handleNotFoundError(req, res, 'Group');
-  }
-  const user = await User.findById(req.body.userId);
-  if (!user) {
-    return handleNotFoundError(req, res, 'User');
-  }
-  const userGroup = await UserGroup.findOne({
-    user: req.body.userId,
-    group: req.params.id,
-  });
-  if (!userGroup) {
-    return handleNotFoundError(req, res, 'UserGroup');
-  }
-
-  await userGroup.deleteOne({ user: req.body.userId, group: req.params.id });
-
-  res.status(200).json({ status: 'success', data: null });
 });
 
 module.exports = {
