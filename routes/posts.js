@@ -16,6 +16,7 @@ router.delete('/:id', controller.deletePost);
 router.get('/:id/likes', likeController.getLikes);
 router.post('/:id/likes', likeController.likePost);
 router.delete('/:id/likes', likeController.removeLike);
+router.get('/:id/likes/status', likeController.checkLikeStatus);
 
 router.get('/:id/comments', commentController.getComments);
 router.get('/:id/comments/:commentId', commentController.getComment);

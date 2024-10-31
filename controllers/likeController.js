@@ -37,8 +37,15 @@ const removeLike = asyncHandler(async (req, res) => {
   res.status(200).json({ status: 'success', data: null });
 });
 
+const checkLikeStatus = asyncHandler(async (req, res) => {
+  const likeExists = await Like.findOne({ user: req.query.userId, post: req.params.id });
+  const hasLiked = !!likeExists;
+  res.status(200).json({ status: 'success', data: hasLiked });
+});
+
 module.exports = {
   getLikes,
   likePost,
   removeLike,
+  checkLikeStatus,
 };
