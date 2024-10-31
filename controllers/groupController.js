@@ -86,14 +86,16 @@ const deleteGroup = asyncHandler(async (req, res) => {
     return;
   }
 
-  // Remove the group from users' groups array
-  await User.updateMany({ groups: groupId }, { $pull: { groups: groupId } });
   // Delete all comments
   const posts = await Post.find({ group: groupId }).exec();
   const postIds = posts.map((post) => post._id);
   await Comment.deleteMany({ author: { $in: postIds } }).exec();
+
   // Delete all posts
   await Post.deleteMany({ group: groupId }).exec();
+
+  // Delete all userGroup
+  await UserGroup.deleteMany({group: groupId}).exec()
 
   res.status(200).json({ status: 'success', data: null });
 });
