@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const getRandomIcon = require('./../utils/getRandomIcon');
 
 const { Schema } = mongoose;
 
@@ -12,6 +13,7 @@ const GroupSchema = new Schema(
     bannerImage: { type: String, default: null },
     theme: { type: String, default: '' },
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    icon: { type: String, default: getRandomIcon, required: true },
   },
   { timestamps: true },
 );
