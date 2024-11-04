@@ -7,7 +7,6 @@ const UserGroup = require('../models/userGroup');
 const Post = require('../models/post');
 const Comment = require('../models/comment');
 const User = require('../models/user');
-const JoinRequest = require('../models/joinRequest');
 
 const getGroups = asyncHandler(async (req, res) => {
   const filter = {};
@@ -16,7 +15,24 @@ const getGroups = asyncHandler(async (req, res) => {
     filter.name = { $regex: req.query.name, $options: 'i' }; // Case-insensitive search
   }
 
-  const groups = await paginate(Group, req.query.page, req.query.limit, filter);
+  let groups = await paginate(Group, req.query.page, req.query.limit, filter);
+
+  if (req.query.userJoined && req.query.userId) {
+    const userJoinedGroups = await UserGroup.find({ user: req.query.userId }).select(
+      'group',
+    );
+    const joinedGroupIds = new Set(
+      userJoinedGroups.map((group) => group.group.toString()),
+    );
+    const groupArr = groups.results;
+    const modifiedGroups = groupArr.map((group) => ({
+      ...group.toObject(),
+      isJoined: joinedGroupIds.has(group._id.toString()),
+    }));
+
+    groups.results = modifiedGroups;
+  }
+
   res.status(200).json({ status: 'success', data: groups });
 });
 
@@ -95,7 +111,7 @@ const deleteGroup = asyncHandler(async (req, res) => {
   await Post.deleteMany({ group: groupId }).exec();
 
   // Delete all userGroup
-  await UserGroup.deleteMany({group: groupId}).exec()
+  await UserGroup.deleteMany({ group: groupId }).exec();
 
   res.status(200).json({ status: 'success', data: null });
 });
