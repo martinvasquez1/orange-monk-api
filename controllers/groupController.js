@@ -7,6 +7,7 @@ const UserGroup = require('../models/userGroup');
 const Post = require('../models/post');
 const Comment = require('../models/comment');
 const User = require('../models/user');
+const JoinRequest = require('../models/joinRequest');
 
 const getGroups = asyncHandler(async (req, res) => {
   const filter = {};
@@ -17,6 +18,7 @@ const getGroups = asyncHandler(async (req, res) => {
 
   let groups = await paginate(Group, req.query.page, req.query.limit, filter);
 
+  // TODO: Clean. Too messy!
   if (req.query.userJoined && req.query.userId) {
     const userJoinedGroups = await UserGroup.find({ user: req.query.userId }).select(
       'group',
@@ -24,11 +26,25 @@ const getGroups = asyncHandler(async (req, res) => {
     const joinedGroupIds = new Set(
       userJoinedGroups.map((group) => group.group.toString()),
     );
+
+    // Add isJoined
     const groupArr = groups.results;
-    const modifiedGroups = groupArr.map((group) => ({
+    let modifiedGroups = groupArr.map((group) => ({
       ...group.toObject(),
       isJoined: joinedGroupIds.has(group._id.toString()),
     }));
+
+    // Add requestStatus
+    const joinRequests = await JoinRequest.find({ user: req.query.userId });
+    modifiedGroups = modifiedGroups.map((group) => {
+      const matchingRequest = joinRequests.find(
+        (request) => request.group.toString() === group._id.toString(),
+      );
+      return {
+        ...group,
+        requestStatus: matchingRequest ? matchingRequest.status : null,
+      };
+    });
 
     groups.results = modifiedGroups;
   }
