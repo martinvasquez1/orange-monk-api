@@ -33,7 +33,6 @@ const getComments = asyncHandler(async (req, res) => {
     path: 'comments',
     populate: {
       path: 'author',
-      select: 'username',
     },
   });
   const comments = post.comments;
