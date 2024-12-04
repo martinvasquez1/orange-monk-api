@@ -39,9 +39,9 @@ app.use('/api/v1', indexRouter);
 app.use('/api-sql/v1', sqlIndexRouter);
 
 const server = createServer(app);
-const port = process.env.SOCKET_PORT || 3001;
+//const port = process.env.SOCKET_PORT || 3001;
 setupSocketIo(server, corsOptions);
-server.listen(port, () => console.log(`WS Listening on port ${port}`));
+//server.listen(port, () => console.log(`WS Listening on port ${port}`));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -61,4 +61,4 @@ app.use(function (err, req, res, next) {
   });
 });
 
-module.exports = app;
+module.exports = { server };
