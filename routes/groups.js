@@ -3,7 +3,7 @@ const router = express.Router();
 const controller = require('../controllers/groupController');
 const joinRequestController = require('../controllers/joinRequestController');
 const {
-    validateGroupCreation,
+    validateGroupCreation, validateGroupUpdate
   } = require('../middlewares/validators/groupValidator');
 const roomController = require('../controllers/roomController');
 const { authUser } = require('../middlewares/auth');
@@ -13,7 +13,7 @@ router.use(authUser);
 router.get('/', controller.getGroups);
 router.get('/:id', controller.getGroup);
 router.post('/', validateGroupCreation, controller.createGroup);
-router.put('/:id', controller.updateGroup);
+router.put('/:id', validateGroupUpdate, controller.updateGroup);
 router.delete('/:id', controller.deleteGroup);
 
 router.get('/:id/posts', controller.getGroupPosts);
