@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/groupController');
 const joinRequestController = require('../controllers/joinRequestController');
+const {
+    validateGroupCreation,
+  } = require('../middlewares/validators/groupValidator');
 const roomController = require('../controllers/roomController');
 const { authUser } = require('../middlewares/auth');
 
@@ -9,7 +12,7 @@ router.use(authUser);
 
 router.get('/', controller.getGroups);
 router.get('/:id', controller.getGroup);
-router.post('/', controller.createGroup);
+router.post('/', validateGroupCreation, controller.createGroup);
 router.put('/:id', controller.updateGroup);
 router.delete('/:id', controller.deleteGroup);
 
