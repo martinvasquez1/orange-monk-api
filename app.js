@@ -35,6 +35,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100, 
+  message: "You have exceeded the request limit. Please try again later.",
+  standardHeaders: true, 
+  legacyHeaders: false,
+});
+
+app.use(limiter);
+
 app.use('/api/v1', indexRouter);
 app.use('/api-sql/v1', sqlIndexRouter);
 
