@@ -25,7 +25,7 @@ describe('Users', () => {
 
     it('should return 400 if name or email is missing', async () => {
         const response = await request(app)
-            .post('/users')
+            .post('api/v1/auth/sign-up')
             .send({ name: 'John Doe' })
             .expect(400);
 
