@@ -31,4 +31,21 @@ describe('Users', () => {
 
         expect(response.body).toEqual({ message: 'Name and email are required' });
     });
+
+    it('should sign-in', async () => {
+        const newUser = { email: 'john.doe@example.com', password:'123' };
+        
+        const response = await request(app)
+            .post('api/v1/auth/sign-in')
+            .send(newUser)
+            .expect(200);
+
+        expect(response.body).toEqual({
+            status: 'success',
+            data: {
+                user: { email: 'john.doe@example.com' },    
+                token: expect.any(String)
+            }
+        });
+    });
 });
