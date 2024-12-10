@@ -32,7 +32,7 @@ const signUp = asyncHandler(async (req, res, next) => {
 
     const savedUser = await newUser.save();
     const jwt = issueJWT(savedUser);
-    res.status(200).json({ status: 'success', data: { user: newUser, token: jwt } });
+    res.status(201).json({ status: 'success', data: { user: newUser, token: jwt } });
   });
 });
 
