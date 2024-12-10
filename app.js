@@ -37,10 +37,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100, 
+  windowMs: 1 * 60 * 1000,
+  max: 40,
   message: "You have exceeded the request limit. Please try again later.",
-  standardHeaders: true, 
+  standardHeaders: true,
   legacyHeaders: false,
 });
 
