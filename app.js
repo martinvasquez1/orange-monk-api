@@ -38,7 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const limiter = rateLimit({
   windowMs: 1 * 60 * 1000,
-  max: 40,
+  max: 100,
   message: "You have exceeded the request limit. Please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
