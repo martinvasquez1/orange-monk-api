@@ -145,6 +145,7 @@ const getGroupPosts = asyncHandler(async (req, res) => {
     req.query.limit,
     { group: req.params.id },
     ['author'],
+    { createdAt: -1 },
   );
 
   res.status(200).json({ status: 'success', data });

@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler');
 
-async function paginate(model, page = 1, limit = 10, filter = {}, populate = []) {
+async function paginate(model, page = 1, limit = 10, filter = {}, populate = [], sort = {}) {
   page = Number(page);
   limit = Number(limit);
 
@@ -27,10 +27,11 @@ async function paginate(model, page = 1, limit = 10, filter = {}, populate = [])
   results.results = await model
     .find(filter)
     .populate(populate)
+    .sort(sort)
     .limit(limit)
     .skip(startIndex)
     .exec();
-	results.totalPages = Math.ceil(amountDocuments / limit);
+  results.totalPages = Math.ceil(amountDocuments / limit);
 
   return results;
 }
