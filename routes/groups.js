@@ -31,4 +31,6 @@ router.post('/:id/rooms', roomController.createRoom);
 router.put('/:id/rooms/:roomId', roomController.updateRoom);
 router.delete('/:id/rooms/:roomId', roomController.deleteRoom);
 
+router.get('/:id/isAdmin', controller.isAdmin);
+
 module.exports = router;

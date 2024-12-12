@@ -184,6 +184,23 @@ const leave = asyncHandler(async (req, res) => {
   res.status(200).json({ status: 'success', data: null });
 });
 
+const isAdmin = asyncHandler(async (req, res) => {
+  const userGroup = await UserGroup.findOne({
+    user: req.query.userId,
+    group: req.params.id,
+  });
+
+  if (userGroup) {
+    return res
+      .status(200)
+      .json({ status: 'success', isAdmin: userGroup.role === 'admin' });
+  } else {
+    return res
+      .status(404)
+      .json({ status: 'error', message: 'User is not part of the group' });
+  }
+});
+
 module.exports = {
   getGroups,
   getGroup,
@@ -193,4 +210,5 @@ module.exports = {
   getGroupPosts,
   getGroupUsers,
   leave,
+  isAdmin,
 };
